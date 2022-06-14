@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationApproval.Services
 {
-    internal sealed class ApplicationApprovalService
+    public sealed class ApplicationApprovalService
     {
         private IReader Reader { get; }
 

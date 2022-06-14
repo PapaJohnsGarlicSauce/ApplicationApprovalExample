@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ApplicationApproval": {
+      "commandName": "Project",
+      "commandLineArgs": "--file \"C:\\Lower\\file.txt.txt\""
+    }
+  }
+}

@@ -202,6 +202,7 @@ namespace ApplicationApprovalTest.Services.RulesEngine.Rules
             var result = rule.Execute(application);
 
             // Only real way to test is check if RuleResult.Message contains expected dti
+            // Could potentially have issues if rounding value rounds to 0
             // This is very brittle so might consider adding a "value" to RuleResult to retrieve calculated value
             result.Message.ShouldNotBeNull().ShouldContain(exp);
         }

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace ApplicationApproval.Models
 {
-    public class Loan : IRegexClass<Loan>
+    public class Loan
     {
         public static string LoanRegex { get; } =
             @"Loan (?<ApplicationId>{0}) (?<PrincipalAmount>\d+) (?<Years>\d+) (?<Rate>\d+\.*\d+) (?<MonthlyPayment>\d+\.*\d+)";
@@ -29,14 +29,9 @@ namespace ApplicationApproval.Models
             MonthlyPayment = monthlyPayment;
         }
 
-        public Loan(string applicationId)
+        public static Loan? Parse(string applicationId, string fileContent)
         {
-            ApplicationId = applicationId;
-        }
-
-        public Loan? GetFromFile(string fileContent)
-        {
-            var loanRegex = new Regex(string.Format(LoanRegex, ApplicationId), RegexOptions.IgnoreCase);
+            var loanRegex = new Regex(string.Format(LoanRegex, applicationId), RegexOptions.IgnoreCase);
             return loanRegex.GetDeserializedObject<Loan>(fileContent);
         }
 

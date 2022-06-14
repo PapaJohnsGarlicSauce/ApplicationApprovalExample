@@ -1,11 +1,10 @@
 ﻿using ApplicationApproval.Services;
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace ApplicationApproval.Models
 {
-    public class Liability : IRegexClass<Liability>
+    public class Liability
     {
         public static string LiabilityRegex { get; } =
             @"Liability (?<ApplicationId>{0}) (?<RawNames>(\S+\,*\S+)) (?<Kind>\S+) (?<MonthlyPayment>\d+\.*\d+) (?<OutstandingBalance>\d+\.*\d+)";
@@ -32,14 +31,9 @@ namespace ApplicationApproval.Models
             OutstandingBalance = outstandingBalance;
         }
 
-        public Liability(string applicationId)
+        public static Liability? Parse(string applicationId, string fileContent)
         {
-            ApplicationId = applicationId;
-        }
-
-        public Liability? GetFromFile(string fileContent)
-        {
-            var liabilityRegex = new Regex(string.Format(LiabilityRegex, ApplicationId), RegexOptions.IgnoreCase);
+            var liabilityRegex = new Regex(string.Format(LiabilityRegex, applicationId), RegexOptions.IgnoreCase);
             var liability = liabilityRegex.GetDeserializedObject<Liability>(fileContent);
             if (liability != null)
                 liability.Names = liability?.RawNames?.Split(',');

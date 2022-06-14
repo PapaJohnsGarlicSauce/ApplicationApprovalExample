@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace ApplicationApproval.Models
 {
-    public class Borrower : IRegexClass<Borrower>
+    public class Borrower
     {
         public static string BorrowerRegex { get; } = @"^Borrower (?<ApplicationId>{0}) (?<Name>\S+) (?<CreditScore>\d+)";
 
@@ -28,21 +28,17 @@ namespace ApplicationApproval.Models
             Incomes = incomes;
             Liabilities = liabilities;
         }
-        public Borrower(string applicationId)
-        {
-            ApplicationId = applicationId;
-        }
 
-        public Borrower? GetFromFile(string fileContent)
+        public static Borrower? Parse(string applicationId, string fileContent)
         {
-            var borrowerRegex = new Regex(string.Format(BorrowerRegex, ApplicationId), RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            var borrowerRegex = new Regex(string.Format(BorrowerRegex, applicationId), RegexOptions.IgnoreCase | RegexOptions.Multiline);
             return borrowerRegex.GetDeserializedObject<Borrower>(fileContent);
         }
 
-        public Borrower? GetCoborrowerFromFile(string fileContent)
+        public static Borrower? ParseCoborrower(string applicationId, string fileContent)
         {
-            var coborrowerRegex = new Regex(string.Format(CoborrowerRegex, ApplicationId), RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            return coborrowerRegex.GetDeserializedObject<Borrower?>(fileContent);
+            var coborrowerRegex = new Regex(string.Format(CoborrowerRegex, applicationId), RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            return coborrowerRegex.GetDeserializedObject<Borrower>(fileContent);
         }
 
         public Borrower() { }

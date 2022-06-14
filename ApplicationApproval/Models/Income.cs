@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace ApplicationApproval.Models
 {
-    public class Income : IRegexClass<Income>
+    public class Income
     {
         public static string IncomeRegex { get; } =
             @"Income (?<ApplicationId>{0}) (?<RawNames>(\S+\,*\S+)) (?<Kind>\S+) (?<MonthlyAmount>\d+\.*\d+)";
@@ -28,14 +28,9 @@ namespace ApplicationApproval.Models
             MonthlyAmount = monthlyAmount;
         }
 
-        public Income(string applicationId)
+        public static Income? Parse(string applicationId, string fileContent)
         {
-            ApplicationId = applicationId;
-        }
-
-        public Income? GetFromFile(string fileContent)
-        {
-            var incomeRegex = new Regex(string.Format(IncomeRegex, ApplicationId), RegexOptions.IgnoreCase);
+            var incomeRegex = new Regex(string.Format(IncomeRegex, applicationId), RegexOptions.IgnoreCase);
             var income = incomeRegex.GetDeserializedObject<Income>(fileContent);
             if (income != null)
                 income.Names = income?.RawNames?.Split(',');

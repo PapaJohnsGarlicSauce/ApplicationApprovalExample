@@ -29,18 +29,18 @@ namespace ApplicationApproval.Services.Readers
 
             foreach (var applicationId in ids)
             {
-                var loan = new Loan(applicationId).GetFromFile(fileContent);
+                var loan = Loan.Parse(applicationId, fileContent);
                 if (loan == null)
                     throw new ArgumentNullException(nameof(loan), "Loan information not provided.");
 
                 var incomes = GetIncomes(applicationId, fileContent);
                 var liabilities = GetLiabilities(applicationId, fileContent);
-                var borrower = new Borrower(applicationId).GetFromFile(fileContent);
+                var borrower = Borrower.Parse(applicationId, fileContent);
                 if (borrower == null)
                     throw new ArgumentNullException(nameof(borrower), "Borrower information not provided.");
 
                 AssignIncomeAndLiabilities(borrower, incomes, liabilities);
-                var coborrower = new Borrower(applicationId).GetCoborrowerFromFile(fileContent);
+                var coborrower = Borrower.ParseCoborrower(applicationId, fileContent);
                 if (coborrower != null)
                     AssignIncomeAndLiabilities(coborrower, incomes, liabilities);
                 var application = new Application(applicationId, loan, borrower, coborrower);
@@ -52,12 +52,12 @@ namespace ApplicationApproval.Services.Readers
         private static IEnumerable<Liability>? GetLiabilities(string applicationId, string fileContent)
         {
             //TODO: Ideally, I would get the extension GetDeserializedObject to work with IEnumerable
-            // so I can just pass in GetDeserializedObject<IEnumerable<Liability>> in ctor
+            // so I can just pass in GetDeserializedObject<IEnumerable<Liability>> or pass list into constructor
             // Future enhancement?
             var liabilityRegex = new Regex(string.Format(Liability.LiabilityRegex, applicationId),
                 RegexOptions.IgnoreCase);
             var matches = liabilityRegex.Matches(fileContent);
-            return matches.Select(x => new Liability(applicationId).GetFromFile(x.Value));
+            return matches.Select(x => Liability.Parse(applicationId, x.Value));
         }
 
         private static IEnumerable<Income>? GetIncomes(string applicationId, string fileContent)
@@ -65,7 +65,7 @@ namespace ApplicationApproval.Services.Readers
             var incomeRegex = new Regex(string.Format(Income.IncomeRegex, applicationId),
                 RegexOptions.IgnoreCase);
             var matches = incomeRegex.Matches(fileContent);
-            return matches.Select(x => new Income(applicationId).GetFromFile(x.Value));
+            return matches.Select(x => Income.Parse(applicationId, x.Value));
         }
 
         private static Borrower? AssignIncomeAndLiabilities(Borrower borrower, IEnumerable<Income>? incomes,
